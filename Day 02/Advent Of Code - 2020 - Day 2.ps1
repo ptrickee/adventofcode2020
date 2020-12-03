@@ -12,11 +12,7 @@ foreach ($item in $file) {
     $letter = $split[1].replace(":", "")
     $pass = $split[2]
     $pwdArray = $pass.ToCharArray()
-    $pwdArray | ForEach-Object {
-        if ($_ -eq $letter) {
-            $count++
-        }
-    }
+    $count = ($pwdArray | Where-Object { $_ -eq $letter }).Count
     if (($count -ge $lowerCount) -and ($count -le $upperCount)) {
         $finalCount++
     }
@@ -27,22 +23,14 @@ $finalCount
 #region part 2
 $finalCount = 0
 foreach ($item in $file) {
-    $count = 0
-    $matchAmount = 0
     $split = $item.split(" ")
     $quantity = $split[0]
-    $lowerCount = $quantity.split("-")[0]
-    $upperCount = $quantity.split("-")[1]
+    $lowerCount = [int]$quantity.split("-")[0]
+    $upperCount = [int]$quantity.split("-")[1]
     $letter = $split[1].replace(":", "")
     $pass = $split[2]
     $pwdArray = $pass.ToCharArray()
-    $pwdArray | ForEach-Object {
-        $count++
-        if ((($count -eq $lowerCount) -and ($_ -eq $letter)) -or (($count -eq $upperCount) -and ($_ -eq $letter))) {
-            $matchAmount++
-        }
-    }
-    if ($matchAmount -eq 1) {
+    if (($pwdArray[$lowerCount - 1] -eq $letter) -xor ($pwdArray[$upperCount - 1] -eq $letter)) {
         $finalCount++
     }
 }
